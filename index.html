@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ROBUX — Order Form</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --card:#f6f6f6;
+      --soft:#ffffff;
+      --text:#111111;
+      --muted:#666666;
+      --line:#e5e5e5;
+      --shadow: 0 8px 22px rgba(0,0,0,.06);
+      --radius:16px;
+      --radius2:14px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      font-size:10px; /* default kecil */
+    }
+    .wrap{max-width:720px;margin:0 auto;padding:16px}
+    header{
+      position:sticky;top:0;z-index:10;
+      background:rgba(255,255,255,.92);
+      backdrop-filter: blur(6px);
+      border-bottom:1px solid var(--line);
+    }
+    header .wrap{padding:14px 16px}
+    h1{
+      margin:0;
+      font-size:12px; /* judul 11–12px */
+      letter-spacing:.3px;
+      font-weight:900;
+    }
+    .sub{color:var(--muted);margin-top:6px;line-height:1.45}
+
+    .panel{
+      margin-top:14px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel-h{
+      padding:12px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .panel-h h2{
+      margin:0;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.3px;
+    }
+    .panel-b{padding:12px}
+
+    .tabs{display:flex;gap:8px}
+    .tab{
+      flex:1;
+      border:1px solid var(--line);
+      background:transparent;
+      color:var(--text);
+      padding:10px 10px;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:10px;
+      font-weight:900;
+    }
+    .tab[aria-selected="true"]{
+      border-color:rgba(17,17,17,.55);
+      box-shadow:0 0 0 2px rgba(17,17,17,.10) inset;
+      background:rgba(17,17,17,.03);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    label{display:block;color:var(--muted);margin-bottom:6px}
+    input[type="text"], input[type="number"], textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background:var(--soft);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 10px;
+      outline:none;
+      font-size:10px;
+    }
+    textarea{min-height:72px;resize:vertical}
+
+    .row2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width:560px){
+      .row2{grid-template-columns:1fr}
+    }
+
+    .hint{color:var(--muted);font-size:10px;line-height:1.35}
+    .mini{
+      padding:10px 10px;
+      border:1px dashed rgba(17,17,17,.25);
+      border-radius:12px;
+      background:rgba(17,17,17,.03);
+      color:var(--text);
+      font-size:10px;
+      line-height:1.4;
+    }
+
+    .totalbox{
+      border-top:1px solid var(--line);
+      margin-top:10px;
+      padding-top:10px;
+      display:grid;
+      gap:8px;
+    }
+    .kv{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-size:10px;
+    }
+    .kv strong{color:var(--text);font-size:11px}
+
+    .checkline{
+      display:none;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:rgba(17,17,17,.03);
+      cursor:pointer;
+      user-select:none;
+    }
+    .checkbox{
+      width:18px;height:18px;border-radius:6px;
+      border:1px solid var(--line);
+      display:grid;place-items:center;
+      background:var(--soft);
+      font-weight:900;
+      line-height:1;
+      margin-top:1px;
+    }
+    .checktext strong{font-weight:900}
+    .checktext .desc{color:var(--muted);margin-top:2px;line-height:1.35}
+
+    .btn{
+      border:1px solid var(--line);
+      background:var(--soft);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:900;
+      font-size:10px;
+    }
+    .btn-primary{
+      background:rgba(17,17,17,.06);
+      border-color:rgba(17,17,17,.35)
+    }
+    .btn-primary:hover{background:rgba(17,17,17,.10)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .ticket-area{
+      display:none;
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(17,17,17,.03);
+      padding:12px;
+      text-align:center;
+    }
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+    .ticket-code{margin-top:6px;font-weight:900;font-size:12px}
+    .ticket-template{
+      margin-top:10px;
+      text-align:left;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      background:var(--soft);
+      white-space:pre-wrap;
+      font-size:10px;
+    }
+    .ticket-actions{
+      margin-top:10px;
+      display:flex;
+      gap:8px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    /* Modal popup validasi */
+    .modal{
+      position:fixed;inset:0;
+      background:rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:9999;
+    }
+    .modal-card{
+      width:min(520px,100%);
+      background:var(--soft);
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .modal-h{
+      padding:12px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .modal-h strong{font-size:11px}
+    .modal-b{padding:12px}
+    .modal-msg{font-size:10px;color:var(--text);line-height:1.45}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <h1>ROBUX — Order Form</h1>
+    <div class="sub">Single-page • minimal monochrome</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel">
+    <div class="panel-h">
+      <h2>Data & Jenis Pembelian</h2>
+      <div class="hint">Tanpa keranjang • auto hitung</div>
+    </div>
+
+    <div class="panel-b">
+      <div class="grid">
+        <div class="row2">
+          <div>
+            <label for="displayName">Display name Roblox</label>
+            <input id="displayName" type="text" placeholder="Contoh: Attara" />
+          </div>
+          <div>
+            <label for="rbxUsername">Username Roblox <strong style="color:#111">*</strong></label>
+            <input id="rbxUsername" type="text" placeholder="Contoh: MyRobloxUser (wajib)" />
+          </div>
+        </div>
+
+        <div>
+          <label>Jenis pembelian</label>
+          <div class="tabs" role="tablist" aria-label="Jenis pembelian">
+            <button class="tab" id="tabGIG" type="button" role="tab" aria-selected="true">Gift In Game (GIG)</button>
+            <button class="tab" id="tabPaytax" type="button" role="tab" aria-selected="false">Game Pass Paytax</button>
+            <button class="tab" id="tabNotax" type="button" role="tab" aria-selected="false">Game Pass Notax</button>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="rate">Rate (per Robux)</label>
+            <input id="rate" type="number" min="0" step="1" placeholder="Contoh: 150 (IDR/Robux)" />
+          </div>
+
+          <!-- GIG -->
+          <div id="gigBox">
+            <label for="gigRobux">Robux (harga item)</label>
+            <input id="gigRobux" type="number" min="0" step="1" placeholder="Contoh: 1000" />
+            <div class="hint" style="margin-top:6px">Rumus: robux × rate</div>
+          </div>
+
+          <!-- PAYTAX -->
+          <div id="paytaxBox" style="display:none">
+            <label for="paytaxTarget">Target Robux (bersih)</label>
+            <input id="paytaxTarget" type="number" min="0" step="1" placeholder="Contoh: 700" />
+            <div class="hint" style="margin-top:6px">Rumus: ceil(target ÷ 0.70) × rate</div>
+          </div>
+
+          <!-- NOTAX -->
+          <div id="notaxBox" style="display:none">
+            <label for="notaxRobux">Robux (dibeli)</label>
+            <input id="notaxRobux" type="number" min="0" step="1" placeholder="Contoh: 1000" />
+            <div class="hint" style="margin-top:6px">Rumus: robux × rate • tampil estimasi bersih 70%</div>
+          </div>
+        </div>
+
+        <div id="gpBox" style="display:none">
+          <label for="gamepassLink">ID/Link Game Pass <strong style="color:#111">*</strong></label>
+          <input id="gamepassLink" type="text" placeholder="Contoh: https://www.roblox.com/game-pass/12345678/..." />
+          <div class="hint" style="margin-top:6px">Wajib untuk Paytax & Notax</div>
+        </div>
+
+        <div>
+          <label for="note">Catatan (opsional)</label>
+          <textarea id="note" placeholder="Contoh: Tolong proses secepatnya ya."></textarea>
+        </div>
+
+        <div id="reminder" class="mini" style="display:none">
+          <strong>Reminder Game Pass:</strong><br>
+          • Robux masuk pending<br>
+          • Estimasi 5–8 hari<br>
+          • Maksimal 1000 Robux per ID<br>
+          • Jika lebih, harus buat lebih dari 1 Game Pass
+        </div>
+
+        <div class="totalbox">
+          <div class="kv"><span>Mode</span><strong id="modeLabel">GIG</strong></div>
+          <div class="kv" id="grossRow" style="display:none"><span>Robux yang perlu di-set (gross)</span><strong id="grossVal">0</strong></div>
+          <div class="kv" id="netRow" style="display:none"><span>Perkiraan bersih 70%</span><strong id="netVal">0</strong></div>
+          <div class="kv"><span>Total harga</span><strong id="totalPrice">Rp0</strong></div>
+          <div class="hint" id="calcHint">Isi rate + robux untuk menghitung.</div>
+        </div>
+
+        <div class="checkline" id="agreeLine" role="button" tabindex="0">
+          <div class="checkbox" id="agreeBox"></div>
+          <div class="checktext">
+            <strong>Saya sudah paham ketentuan Paytax/Notax</strong>
+            <div class="desc">Wajib dicentang sebelum submit.</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="submitBtn" type="button">Submit Order</button>
+
+        <div class="ticket-area" id="ticketArea">
+          <div style="font-weight:900">Berhasil dikirim.</div>
+          <div class="ticket-code mono" id="ticketCode"></div>
+
+          <div class="hint" style="margin-top:10px;margin-bottom:6px">Template pesan (tersalin otomatis):</div>
+          <div class="ticket-template mono" id="ticketTemplate"></div>
+
+          <div class="ticket-actions">
+            <button class="btn btn-primary" id="copyTicket" type="button">Salin</button>
+            <a class="btn" id="openBot" href="https://t.me/" target="_blank" rel="noopener">Buka Telegram</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Modal popup validasi -->
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-label="Validasi">
+    <div class="modal-h">
+      <strong>Validasi</strong>
+      <button class="btn" id="modalClose" type="button" style="padding:8px 10px">Tutup</button>
+    </div>
+    <div class="modal-b">
+      <div class="modal-msg" id="modalMsg">-</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // === KONFIG ===
+  const BOT_TOKEN = "6337225915:AAEOXjKha96mDT3ebLxx1No8CG6dc8OYqIY";
+  const CHAT_ID = "-1002053067081";
+  const BRAND = "ROBUX";
+
+  // === STATE ===
+  const Mode = { GIG:"GIG", PAYTAX:"PAYTAX", NOTAX:"NOTAX" };
+  let activeMode = Mode.GIG;
+
+  let agreed = false;
+  let lastTicket = "";
+  let lastTemplate = "";
+
+  // === EL ===
+  const tabGIG = document.getElementById("tabGIG");
+  const tabPaytax = document.getElementById("tabPaytax");
+  const tabNotax = document.getElementById("tabNotax");
+
+  const gigBox = document.getElementById("gigBox");
+  const paytaxBox = document.getElementById("paytaxBox");
+  const notaxBox = document.getElementById("notaxBox");
+  const gpBox = document.getElementById("gpBox");
+  const reminder = document.getElementById("reminder");
+
+  const displayNameEl = document.getElementById("displayName");
+  const rbxUsernameEl = document.getElementById("rbxUsername");
+  const rateEl = document.getElementById("rate");
+  const gigRobuxEl = document.getElementById("gigRobux");
+  const paytaxTargetEl = document.getElementById("paytaxTarget");
+  const notaxRobuxEl = document.getElementById("notaxRobux");
+  const gamepassLinkEl = document.getElementById("gamepassLink");
+  const noteEl = document.getElementById("note");
+
+  const modeLabelEl = document.getElementById("modeLabel");
+  const grossRow = document.getElementById("grossRow");
+  const grossValEl = document.getElementById("grossVal");
+  const netRow = document.getElementById("netRow");
+  const netValEl = document.getElementById("netVal");
+  const totalPriceEl = document.getElementById("totalPrice");
+  const calcHintEl = document.getElementById("calcHint");
+
+  const agreeLine = document.getElementById("agreeLine");
+  const agreeBox = document.getElementById("agreeBox");
+
+  const submitBtn = document.getElementById("submitBtn");
+
+  const ticketArea = document.getElementById("ticketArea");
+  const ticketCodeEl = document.getElementById("ticketCode");
+  const ticketTemplateEl = document.getElementById("ticketTemplate");
+  const copyTicketBtn = document.getElementById("copyTicket");
+  const openBotLink = document.getElementById("openBot");
+
+  const modal = document.getElementById("modal");
+  const modalMsg = document.getElementById("modalMsg");
+  const modalClose = document.getElementById("modalClose");
+
+  // === UTIL ===
+  const rupiah = (n) => "Rp" + Math.round(n).toLocaleString("id-ID");
+  const toInt = (v) => {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return 0;
+    return Math.floor(n);
+  };
+
+  function sanitizeRobloxUsername(v){
+    const raw = String(v || "").trim();
+    if (!raw) return "";
+    // Roblox username: buat tiketnya aman, buang spasi; biarkan _ dan angka/huruf
+    return raw.replace(/\s+/g,"").replace(/[^a-zA-Z0-9_]/g,"");
+  }
+
+  function yyyymmdd(){
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth()+1).padStart(2,"0");
+    const d = String(now.getDate()).padStart(2,"0");
+    return `${y}${m}${d}`;
+  }
+
+  function generateTicket(robloxUsername){
+    const u = sanitizeRobloxUsername(robloxUsername);
+    const random3 = Math.floor(100 + Math.random() * 900);
+    // format mengikuti contoh kamu: beda di username roblox (bukan telegram)
+    return `#${u}${random3}WTP${yyyymmdd()}`;
+  }
+
+  function extractGamePassId(input){
+    const s = String(input || "").trim();
+    if (!s) return "";
+    // Terima ID numeric langsung
+    if (/^\d{5,}$/.test(s)) return s;
+
+    // Coba ambil angka dari URL roblox game-pass
+    // Contoh: https://www.roblox.com/game-pass/12345678/...
+    const m1 = s.match(/roblox\.com\/game-pass\/(\d{5,})/i);
+    if (m1 && m1[1]) return m1[1];
+
+    // Alternatif: ambil angka besar pertama yang muncul (fallback)
+    const m2 = s.match(/(\d{5,})/);
+    if (m2 && m2[1]) return m2[1];
+
+    return "";
+  }
+
+  function showModal(msg){
+    modalMsg.textContent = msg;
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden","false");
+  }
+  function closeModal(){
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden","true");
+  }
+
+  async function copyText(text){
+    try{
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch(e){
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    }
+  }
+
+  // === MODE UI ===
+  function setMode(mode){
+    activeMode = mode;
+
+    tabGIG.setAttribute("aria-selected", String(mode===Mode.GIG));
+    tabPaytax.setAttribute("aria-selected", String(mode===Mode.PAYTAX));
+    tabNotax.setAttribute("aria-selected", String(mode===Mode.NOTAX));
+
+    gigBox.style.display = (mode===Mode.GIG) ? "block" : "none";
+    paytaxBox.style.display = (mode===Mode.PAYTAX) ? "block" : "none";
+    notaxBox.style.display = (mode===Mode.NOTAX) ? "block" : "none";
+
+    const needsGP = (mode===Mode.PAYTAX || mode===Mode.NOTAX);
+    gpBox.style.display = needsGP ? "block" : "none";
+    reminder.style.display = needsGP ? "block" : "none";
+    agreeLine.style.display = needsGP ? "flex" : "none";
+
+    modeLabelEl.textContent = mode;
+
+    // reset derived rows
+    grossRow.style.display = "none";
+    netRow.style.display = "none";
+
+    // reset agreement ketika pindah mode
+    agreed = false;
+    agreeBox.textContent = "";
+
+    recalc();
+  }
+
+  // === CALC ===
+  function recalc(){
+    const rate = toInt(rateEl.value);
+
+    let total = 0;
+    let okCalc = false;
+
+    grossRow.style.display = "none";
+    netRow.style.display = "none";
+
+    if (activeMode === Mode.GIG){
+      const robux = toInt(gigRobuxEl.value);
+      if (rate > 0 && robux > 0){
+        total = robux * rate;
+        okCalc = true;
+      }
+      calcHintEl.textContent = "GIG: robux × rate";
+    }
+
+    if (activeMode === Mode.PAYTAX){
+      const target = toInt(paytaxTargetEl.value);
+      if (rate > 0 && target > 0){
+        const gross = Math.ceil(target / 0.70);
+        total = gross * rate;
+        okCalc = true;
+        grossRow.style.display = "flex";
+        grossValEl.textContent = gross.toLocaleString("id-ID");
+      }
+      calcHintEl.textContent = "Paytax: ceil(target ÷ 70%) × rate";
+    }
+
+    if (activeMode === Mode.NOTAX){
+      const robux = toInt(notaxRobuxEl.value);
+      if (rate > 0 && robux > 0){
+        total = robux * rate;
+        okCalc = true;
+        netRow.style.display = "flex";
+        netValEl.textContent = Math.floor(robux * 0.70).toLocaleString("id-ID");
+      }
+      calcHintEl.textContent = "Notax: robux × rate (tampil estimasi bersih 70%)";
+    }
+
+    totalPriceEl.textContent = rupiah(total);
+
+    // simpan status calc untuk validasi submit
+    totalPriceEl.dataset.okCalc = okCalc ? "1" : "0";
+    totalPriceEl.dataset.total = String(total);
+  }
+
+  // === VALIDATION & SEND ===
+  function buildMessage(payload){
+    // payload: {ticket, displayName, username, mode, rate, ...}
+    const lines = [];
+
+    lines.push(`📦 ${BRAND} — ORDER`);
+    lines.push(``);
+    lines.push(`🎟 Ticket: ${payload.ticket}`);
+    lines.push(`Display Name: ${payload.displayName || "-"}`);
+    lines.push(`Username Roblox: ${payload.username}`);
+    lines.push(`Jenis: ${payload.mode}`);
+    lines.push(`Rate: ${rupiah(payload.rate)}/Robux`);
+    lines.push(``);
+
+    if (payload.mode === Mode.GIG){
+      lines.push(`Detail:`);
+      lines.push(`- Robux (harga item): ${payload.robux.toLocaleString("id-ID")}`);
+      lines.push(`Total: ${rupiah(payload.total)}`);
+    }
+
+    if (payload.mode === Mode.PAYTAX){
+      lines.push(`Detail:`);
+      lines.push(`- Target (bersih): ${payload.target.toLocaleString("id-ID")} Robux`);
+      lines.push(`- Gross (dibutuhkan): ${payload.gross.toLocaleString("id-ID")} Robux`);
+      lines.push(`- Game Pass ID: ${payload.gamePassId}`);
+      lines.push(`Total: ${rupiah(payload.total)}`);
+    }
+
+    if (payload.mode === Mode.NOTAX){
+      lines.push(`Detail:`);
+      lines.push(`- Robux (dibeli): ${payload.robux.toLocaleString("id-ID")} Robux`);
+      lines.push(`- Estimasi bersih 70%: ${payload.net.toLocaleString("id-ID")} Robux`);
+      lines.push(`- Game Pass ID: ${payload.gamePassId}`);
+      lines.push(`Total: ${rupiah(payload.total)}`);
+    }
+
+    if (payload.note){
+      lines.push(``);
+      lines.push(`Catatan:`);
+      lines.push(payload.note);
+    }
+
+    return lines.join("\n");
+  }
+
+  function ticketTemplate(ticket){
+    return `Halo, aku mau order yaa. Ini tiketnya : ${ticket}. Untuk pembayarannya aku mau via QRIS.`;
+  }
+
+  async function sendTelegram(text){
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+    const res = await fetch(url, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ chat_id: CHAT_ID, text })
+    });
+
+    const data = await res.json();
+    return !!(data && data.ok);
+  }
+
+  async function onSubmit(){
+    ticketArea.style.display = "none";
+    lastTicket = "";
+    lastTemplate = "";
+
+    // validate required: username roblox
+    const usernameRaw = String(rbxUsernameEl.value || "").trim();
+    if (!usernameRaw){
+      showModal("Username Roblox wajib diisi.");
+      return;
+    }
+    const username = sanitizeRobloxUsername(usernameRaw);
+    if (!username){
+      showModal("Username Roblox tidak valid.");
+      return;
+    }
+
+    // validate calc
+    const okCalc = totalPriceEl.dataset.okCalc === "1";
+    const total = Number(totalPriceEl.dataset.total || "0");
+    if (!okCalc || !Number.isFinite(total) || total <= 0){
+      showModal("Harga belum terhitung. Pastikan rate & jumlah Robux sudah diisi.");
+      return;
+    }
+
+    const rate = toInt(rateEl.value);
+    if (rate <= 0){
+      showModal("Rate wajib diisi dan harus lebih dari 0.");
+      return;
+    }
+
+    // paytax/notax require GP + checkbox
+    let gamePassId = "";
+    if (activeMode === Mode.PAYTAX || activeMode === Mode.NOTAX){
+      gamePassId = extractGamePassId(gamepassLinkEl.value);
+      if (!gamePassId){
+        showModal("ID/Link Game Pass tidak valid. Masukkan ID angka atau link Roblox game-pass.");
+        return;
+      }
+      if (!agreed){
+        showModal("Kamu harus mencentang persetujuan sebelum submit.");
+        return;
+      }
+    }
+
+    // mode-specific required numbers
+    let payload = {
+      ticket: generateTicket(username),
+      displayName: String(displayNameEl.value || "").trim(),
+      username,
+      mode: activeMode,
+      rate,
+      total,
+      note: String(noteEl.value || "").trim()
+    };
+
+    if (activeMode === Mode.GIG){
+      const robux = toInt(gigRobuxEl.value);
+      if (robux <= 0){
+        showModal("Robux (harga item) wajib diisi untuk GIG.");
+        return;
+      }
+      payload.robux = robux;
+    }
+
+    if (activeMode === Mode.PAYTAX){
+      const target = toInt(paytaxTargetEl.value);
+      if (target <= 0){
+        showModal("Target Robux (bersih) wajib diisi untuk Paytax.");
+        return;
+      }
+      payload.target = target;
+      payload.gross = Math.ceil(target / 0.70);
+      payload.gamePassId = gamePassId;
+    }
+
+    if (activeMode === Mode.NOTAX){
+      const robux = toInt(notaxRobuxEl.value);
+      if (robux <= 0){
+        showModal("Robux (dibeli) wajib diisi untuk Notax.");
+        return;
+      }
+      payload.robux = robux;
+      payload.net = Math.floor(robux * 0.70);
+      payload.gamePassId = gamePassId;
+    }
+
+    // send
+    if (BOT_TOKEN.includes("YOUR_") || CHAT_ID.includes("YOUR_")){
+      showModal("BOT_TOKEN / CHAT_ID belum diisi. Silakan isi dulu di bagian KONFIG JavaScript.");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Mengirim...";
+
+    try{
+      const msg = buildMessage(payload);
+      const ok = await sendTelegram(msg);
+
+      if (!ok){
+        showModal("Gagal kirim ke Telegram. Cek BOT_TOKEN, CHAT_ID, atau koneksi.");
+        return;
+      }
+
+      lastTicket = payload.ticket;
+      lastTemplate = ticketTemplate(payload.ticket);
+
+      ticketCodeEl.textContent = payload.ticket;
+      ticketTemplateEl.textContent = lastTemplate;
+      ticketArea.style.display = "block";
+
+      await copyText(lastTemplate);
+
+      ticketArea.scrollIntoView({ behavior:"smooth", block:"center" });
+
+    } catch(e){
+      showModal("Terjadi kesalahan saat mengirim.");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit Order";
+    }
+  }
+
+  // === EVENTS ===
+  tabGIG.addEventListener("click", ()=>setMode(Mode.GIG));
+  tabPaytax.addEventListener("click", ()=>setMode(Mode.PAYTAX));
+  tabNotax.addEventListener("click", ()=>setMode(Mode.NOTAX));
+
+  [rateEl, gigRobuxEl, paytaxTargetEl, notaxRobuxEl].forEach(el=>{
+    el.addEventListener("input", recalc);
+    el.addEventListener("change", recalc);
+  });
+
+  agreeLine.addEventListener("click", ()=>{
+    agreed = !agreed;
+    agreeBox.textContent = agreed ? "✓" : "";
+  });
+  agreeLine.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      agreed = !agreed;
+      agreeBox.textContent = agreed ? "✓" : "";
+    }
+  });
+
+  submitBtn.addEventListener("click", onSubmit);
+
+  copyTicketBtn.addEventListener("click", async ()=>{
+    if (!lastTemplate) return;
+    const ok = await copyText(lastTemplate);
+    if (ok) copyTicketBtn.textContent = "Tersalin ✓";
+    setTimeout(()=>{ copyTicketBtn.textContent = "Salin"; }, 1200);
+  });
+
+  modalClose.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e)=>{
+    if (e.target === modal) closeModal();
+  });
+
+  // init
+  setMode(Mode.GIG);
+  recalc();
+</script>
+</body>
+</html>
