@@ -304,9 +304,21 @@
           </div>
         </div>
 
+        <!-- Tambahan khusus GIG -->
+        <div id="gigExtra" class="row2">
+          <div>
+            <label for="gigMap">Maps apa</label>
+            <input id="gigMap" type="text" placeholder="Contoh: Fish it" />
+          </div>
+          <div>
+            <label for="gigItemName">Nama item yang mau dibeli</label>
+            <input id="gigItemName" type="text" placeholder="Contoh: Limited Skin Rod Cupid's Harp" />
+          </div>
+        </div>
+
         <div id="gpBox" style="display:none">
           <label for="gamepassLinks">ID/Link Game Pass <strong style="color:#111">*</strong></label>
-          <textarea id="gamepassLinks" placeholder="Masukkan 1 atau lebih ID/Link Game Pass, pisahkan per baris.&#10;Contoh:&#10;12345678 atau https://www.roblox.com/game-pass/12345678&#10; 87654321 atau https://www.roblox.com/game-pass/87654321"></textarea>
+          <textarea id="gamepassLinks" placeholder="Masukkan 1 atau lebih ID/Link Game Pass, pisahkan per baris.&#10;Contoh:&#10;12345678 atau https://www.roblox.com/game-pass/12345678&#10;87654321 atau https://www.roblox.com/game-pass/87654321"></textarea>
           <div class="hint" style="margin-top:6px">Lihat cara salin ID Gamepass • 1 baris = 1 Game Pass</div>
         </div>
 
@@ -390,6 +402,7 @@
   const gigBox = document.getElementById("gigBox");
   const paytaxBox = document.getElementById("paytaxBox");
   const notaxBox = document.getElementById("notaxBox");
+  const gigExtra = document.getElementById("gigExtra");
   const gpBox = document.getElementById("gpBox");
   const reminder = document.getElementById("reminder");
 
@@ -402,6 +415,9 @@
   const paytaxTargetEl = document.getElementById("paytaxTarget");
   const notaxRobuxEl = document.getElementById("notaxRobux");
   const gamepassLinksEl = document.getElementById("gamepassLinks");
+
+  const gigMapEl = document.getElementById("gigMap");
+  const gigItemNameEl = document.getElementById("gigItemName");
 
   const modeLabelEl = document.getElementById("modeLabel");
   const grossRow = document.getElementById("grossRow");
@@ -532,6 +548,9 @@
     paytaxBox.style.display = (mode===Mode.PAYTAX) ? "block" : "none";
     notaxBox.style.display = (mode===Mode.NOTAX) ? "block" : "none";
 
+    // hanya tampil di GIG
+    gigExtra.style.display = (mode===Mode.GIG) ? "grid" : "none";
+
     const needsGP = (mode===Mode.PAYTAX || mode===Mode.NOTAX);
     gpBox.style.display = needsGP ? "block" : "none";
     reminder.style.display = needsGP ? "block" : "none";
@@ -612,6 +631,8 @@
 
     if (payload.mode === Mode.GIG){
       lines.push(`Detail:`);
+      lines.push(`- Maps: ${payload.map || "-"}`);
+      lines.push(`- Item: ${payload.itemName || "-"}`);
       lines.push(`- Robux (harga item): ${payload.robux.toLocaleString("id-ID")}`);
       lines.push(`Total: ${rupiah(payload.total)}`);
     }
@@ -635,7 +656,6 @@
     return lines.join("\n");
   }
 
-  // TEMPLATE: sudah ditambah total harga
   function ticketTemplate(ticket, total){
     return `Halo, aku mau order yaa. Ini tiketnya : ${ticket} [Total harga: ${rupiah(total)}]. Untuk pembayarannya aku mau via QRIS.`;
   }
@@ -715,6 +735,8 @@
         return;
       }
       payload.robux = robux;
+      payload.map = String(gigMapEl.value || "").trim();
+      payload.itemName = String(gigItemNameEl.value || "").trim();
     }
 
     if (activeMode === Mode.PAYTAX){
