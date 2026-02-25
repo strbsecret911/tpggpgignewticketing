@@ -112,6 +112,16 @@
     }
 
     .hint{color:var(--muted);font-size:10px;line-height:1.35}
+
+    .hintlink{
+      font-weight:900;
+      text-decoration:underline;
+      cursor:pointer;
+      color:var(--text);
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     .mini{
       padding:10px 10px;
       border:1px dashed rgba(17,17,17,.25);
@@ -225,6 +235,7 @@
       border-radius:16px;
       box-shadow:var(--shadow);
       overflow:hidden;
+      position:relative;
     }
     .modal-h{
       padding:12px 12px;
@@ -234,6 +245,34 @@
     .modal-h strong{font-size:11px}
     .modal-b{padding:12px}
     .modal-msg{font-size:10px;color:var(--text);line-height:1.45;white-space:pre-wrap}
+
+    /* Modal tutorial (close ONLY by X) */
+    .tut-close{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(17,17,17,.06);
+      cursor:pointer;
+      font-weight:900;
+      line-height:1;
+    }
+    .tut-body{
+      padding:12px;
+      display:grid;
+      gap:10px;
+    }
+    .tut-img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--soft);
+    }
   </style>
 </head>
 
@@ -318,8 +357,11 @@
 
         <div id="gpBox" style="display:none">
           <label for="gamepassLinks">ID/Link Game Pass <strong style="color:#111">*</strong></label>
-          <textarea id="gamepassLinks" placeholder="Masukkan 1 atau lebih ID/Link Game Pass, pisahkan per baris.&#10;Contoh:&#10;12345678 atau https://www.roblox.com/game-pass/12345678&#10;87654321 atau https://www.roblox.com/game-pass/87654321"></textarea>
-          <div class="hint" style="margin-top:6px">Lihat cara salin ID Gamepass • 1 baris = 1 Game Pass</div>
+          <textarea id="gamepassLinks" placeholder="Masukkan 1 atau lebih ID/Link Game Pass, pisahkan per baris.&#10;Contoh:&#10;12345678 atau https://www.roblox.com/game-pass/12345678&#10; 87654321 atau https://www.roblox.com/game-pass/87654321"></textarea>
+          <div class="hint" style="margin-top:6px">
+            <span class="hintlink" id="openGpTutorial" role="button" tabindex="0">Lihat cara salin ID Gamepass</span>
+            • 1 baris = 1 Game Pass
+          </div>
         </div>
 
         <div id="reminder" class="mini" style="display:none">
@@ -375,6 +417,17 @@
     </div>
     <div class="modal-b">
       <div class="modal-msg" id="modalMsg">-</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal tutorial Gamepass (close ONLY by X) -->
+<div class="modal" id="gpTutModal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-label="Tutorial salin ID Gamepass">
+    <button class="tut-close" id="gpTutClose" type="button" title="Tutup">✕</button>
+    <div class="tut-body">
+      <img class="tut-img" alt="Tutorial salin ID Gamepass"
+           src="https://faqs.uwu.ai/assets/images/gallery03/f36b78b6_original.jpg?v=7f7b33db" />
     </div>
   </div>
 </div>
@@ -440,6 +493,11 @@
   const modal = document.getElementById("modal");
   const modalMsg = document.getElementById("modalMsg");
   const modalClose = document.getElementById("modalClose");
+
+  // Tutorial modal
+  const openGpTutorial = document.getElementById("openGpTutorial");
+  const gpTutModal = document.getElementById("gpTutModal");
+  const gpTutClose = document.getElementById("gpTutClose");
 
   // === UTIL ===
   const rupiah = (n) => "Rp" + Math.round(n).toLocaleString("id-ID");
@@ -534,6 +592,16 @@
       document.body.removeChild(ta);
       return ok;
     }
+  }
+
+  // === TUTORIAL MODAL (CLOSE ONLY BY X) ===
+  function openGpTut(){
+    gpTutModal.style.display = "flex";
+    gpTutModal.setAttribute("aria-hidden","false");
+  }
+  function closeGpTut(){
+    gpTutModal.style.display = "none";
+    gpTutModal.setAttribute("aria-hidden","true");
   }
 
   // === MODE UI ===
@@ -839,6 +907,16 @@
   modal.addEventListener("click", (e)=>{
     if (e.target === modal) closeModal();
   });
+
+  // Tutorial open/close (NO overlay close, NO ESC close)
+  openGpTutorial.addEventListener("click", openGpTut);
+  openGpTutorial.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      openGpTut();
+    }
+  });
+  gpTutClose.addEventListener("click", closeGpTut);
 
   // init
   setMode(Mode.GIG);
