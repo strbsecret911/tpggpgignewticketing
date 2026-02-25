@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ROBUX — Order Form</title>
+  <title>ROBUX GAMEPASS & GIG</title>
   <style>
     :root{
       --bg:#ffffff;
@@ -240,16 +240,16 @@
 <body>
 <header>
   <div class="wrap">
-    <h1>ROBUX — Order Form</h1>
-    <div class="sub">Single-page • minimal monochrome</div>
+    <h1>ROBUX GAMEPASS & GIG</h1>
+    <div class="sub">@Topupgram on Telegram</div>
   </div>
 </header>
 
 <main class="wrap">
   <section class="panel">
     <div class="panel-h">
-      <h2>Data & Jenis Pembelian</h2>
-      <div class="hint">Tanpa keranjang • auto hitung</div>
+      <h2>Format Pembelian</h2>
+      <div class="hint">Auto Calculate</div>
     </div>
 
     <div class="panel-b">
@@ -257,20 +257,20 @@
         <div class="row2">
           <div>
             <label for="displayName">Display name Roblox</label>
-            <input id="displayName" type="text" placeholder="Contoh: Attara" />
+            <input id="displayName" type="text" placeholder="Contoh: Alyzè" />
           </div>
           <div>
             <label for="rbxUsername">Username Roblox <strong style="color:#111">*</strong></label>
-            <input id="rbxUsername" type="text" placeholder="Contoh: MyRobloxUser (wajib)" />
+            <input id="rbxUsername" type="text" placeholder="Contoh: deeyney (wajib, yang ada @ nya)" />
           </div>
         </div>
 
         <div>
-          <label>Jenis pembelian</label>
+          <label>Pilih Kategori</label>
           <div class="tabs" role="tablist" aria-label="Jenis pembelian">
             <button class="tab" id="tabGIG" type="button" role="tab" aria-selected="true">Gift In Game (GIG)</button>
-            <button class="tab" id="tabPaytax" type="button" role="tab" aria-selected="false">Game Pass Paytax</button>
-            <button class="tab" id="tabNotax" type="button" role="tab" aria-selected="false">Game Pass Notax</button>
+            <button class="tab" id="tabPaytax" type="button" role="tab" aria-selected="false">Gamepass Paytax</button>
+            <button class="tab" id="tabNotax" type="button" role="tab" aria-selected="false">Gamepass Notax</button>
           </div>
         </div>
 
@@ -278,44 +278,44 @@
           <div>
             <label>Rate</label>
             <div class="mini">
-              Rate saat ini: <strong id="rateInfo">Rp0</strong>/Robux
+              Rate saat ini: <strong id="rateInfo">Rp98</strong>/Robux
             </div>
           </div>
 
           <!-- GIG -->
           <div id="gigBox">
-            <label for="gigRobux">Robux (harga item)</label>
-            <input id="gigRobux" type="number" min="0" step="1" placeholder="Contoh: 1000" />
+            <label for="gigRobux">Berapa Robux (harga item)</label>
+            <input id="gigRobux" type="number" min="30" step="1" placeholder="Contoh: 1000" />
             <div class="hint" style="margin-top:6px">Rumus: robux × rate</div>
           </div>
 
           <!-- PAYTAX -->
           <div id="paytaxBox" style="display:none">
-            <label for="paytaxTarget">Target Robux (bersih)</label>
-            <input id="paytaxTarget" type="number" min="0" step="1" placeholder="Contoh: 700" />
-            <div class="hint" style="margin-top:6px">Rumus: ceil(target ÷ 0.70) × rate</div>
+            <label for="paytaxTarget">Masukkan Target Robux (bersih)</label>
+            <input id="paytaxTarget" type="number" min="30" step="1" placeholder="Contoh: 700" />
+            <div class="hint" style="margin-top:6px">Minimal 30 robux. Sudah termasuk tax (pajak).</div>
           </div>
 
           <!-- NOTAX -->
           <div id="notaxBox" style="display:none">
-            <label for="notaxRobux">Robux (dibeli)</label>
-            <input id="notaxRobux" type="number" min="0" step="1" placeholder="Contoh: 1000" />
-            <div class="hint" style="margin-top:6px">Rumus: robux × rate • tampil estimasi bersih 70%</div>
+            <label for="notaxRobux">Masukkan nominal robux yang ingin dibeli</label>
+            <input id="notaxRobux" type="number" min="30" step="1" placeholder="Contoh: 1000" />
+            <div class="hint" style="margin-top:6px">Minimal 30 robux. Belum termasuk tax (pajak).</div>
           </div>
         </div>
 
         <div id="gpBox" style="display:none">
           <label for="gamepassLinks">ID/Link Game Pass <strong style="color:#111">*</strong></label>
-          <textarea id="gamepassLinks" placeholder="Masukkan 1 atau lebih ID/Link Game Pass, pisahkan per baris.&#10;Contoh:&#10;https://www.roblox.com/game-pass/12345678/...&#10;https://www.roblox.com/game-pass/87654321/..."></textarea>
-          <div class="hint" style="margin-top:6px">Wajib untuk Paytax & Notax • 1 baris = 1 Game Pass</div>
+          <textarea id="gamepassLinks" placeholder="Masukkan 1 atau lebih ID/Link Game Pass, pisahkan per baris.&#10;Contoh:&#10;12345678 atau https://www.roblox.com/game-pass/12345678&#10; 87654321 atau https://www.roblox.com/game-pass/87654321"></textarea>
+          <div class="hint" style="margin-top:6px">Lihat cara salin ID Gamepass • 1 baris = 1 Game Pass</div>
         </div>
 
         <div id="reminder" class="mini" style="display:none">
-          <strong>Reminder Game Pass:</strong><br>
-          • Robux masuk pending<br>
-          • Estimasi 5–8 hari<br>
-          • Maksimal 1000 Robux per ID<br>
-          • Jika lebih, harus buat lebih dari 1 Game Pass
+          <strong>Reminder Gamepass:</strong><br>
+          • Robux gamepass akan masuk pending terlebih dahulu. Cek www.roblox.com/transactions<br>
+          • Estimasi 5–8 hari, baru setelahnya robux pending akan cair dan masuk ke saldo robux akun roblox<br>
+          • Maksimal nominal 1000 Robux per ID Gamepass<br>
+          • Jika lebih, maka harus buat lebih dari 1 Gamepass
         </div>
 
         <div class="totalbox">
@@ -601,7 +601,7 @@
   // === MESSAGE ===
   function buildMessage(payload){
     const lines = [];
-    lines.push(`📦 ${BRAND} — ORDER`);
+    lines.push(`📦 ${BRAND} — ORDER GP/GIG`);
     lines.push(``);
     lines.push(`🎟 Ticket: ${payload.ticket}`);
     lines.push(`Display Name: ${payload.displayName || "-"}`);
@@ -618,17 +618,17 @@
 
     if (payload.mode === Mode.PAYTAX){
       lines.push(`Detail:`);
-      lines.push(`- Target (bersih): ${payload.target.toLocaleString("id-ID")} Robux`);
-      lines.push(`- Gross (dibutuhkan): ${payload.gross.toLocaleString("id-ID")} Robux`);
-      lines.push(`- Game Pass ID (${payload.gamePassIds.length}): ${payload.gamePassIds.join(", ")}`);
+      lines.push(`- Target robux diterima (bersih): ${payload.target.toLocaleString("id-ID")} Robux`);
+      lines.push(`- Nominal yang harus di set di gamepass: ${payload.gross.toLocaleString("id-ID")} Robux`);
+      lines.push(`- Gamepass ID (${payload.gamePassIds.length}): ${payload.gamePassIds.join(", ")}`);
       lines.push(`Total: ${rupiah(payload.total)}`);
     }
 
     if (payload.mode === Mode.NOTAX){
       lines.push(`Detail:`);
       lines.push(`- Robux (dibeli): ${payload.robux.toLocaleString("id-ID")} Robux`);
-      lines.push(`- Estimasi bersih 70%: ${payload.net.toLocaleString("id-ID")} Robux`);
-      lines.push(`- Game Pass ID (${payload.gamePassIds.length}): ${payload.gamePassIds.join(", ")}`);
+      lines.push(`- Perkiraan robux diterima bersih: ${payload.net.toLocaleString("id-ID")} Robux`);
+      lines.push(`- Gamepass ID (${payload.gamePassIds.length}): ${payload.gamePassIds.join(", ")}`);
       lines.push(`Total: ${rupiah(payload.total)}`);
     }
 
