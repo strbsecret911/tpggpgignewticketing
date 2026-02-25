@@ -14,7 +14,6 @@
       --line:#e5e5e5;
       --shadow: 0 8px 22px rgba(0,0,0,.06);
       --radius:16px;
-      --radius2:14px;
     }
 
     *{box-sizing:border-box}
@@ -23,7 +22,7 @@
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:var(--bg);
       color:var(--text);
-      font-size:10px; /* default kecil */
+      font-size:10px;
     }
     .wrap{max-width:720px;margin:0 auto;padding:16px}
     header{
@@ -35,7 +34,7 @@
     header .wrap{padding:14px 16px}
     h1{
       margin:0;
-      font-size:12px; /* judul 11–12px */
+      font-size:12px;
       letter-spacing:.3px;
       font-weight:900;
     }
@@ -101,7 +100,7 @@
       outline:none;
       font-size:10px;
     }
-    textarea{min-height:72px;resize:vertical}
+    textarea{min-height:84px;resize:vertical}
 
     .row2{
       display:grid;
@@ -234,7 +233,7 @@
     }
     .modal-h strong{font-size:11px}
     .modal-b{padding:12px}
-    .modal-msg{font-size:10px;color:var(--text);line-height:1.45}
+    .modal-msg{font-size:10px;color:var(--text);line-height:1.45;white-space:pre-wrap}
   </style>
 </head>
 
@@ -277,8 +276,10 @@
 
         <div class="row2">
           <div>
-            <label for="rate">Rate (per Robux)</label>
-            <input id="rate" type="number" min="0" step="1" placeholder="Contoh: 150 (IDR/Robux)" />
+            <label>Rate</label>
+            <div class="mini">
+              Rate saat ini: <strong id="rateInfo">Rp0</strong>/Robux
+            </div>
           </div>
 
           <!-- GIG -->
@@ -304,14 +305,9 @@
         </div>
 
         <div id="gpBox" style="display:none">
-          <label for="gamepassLink">ID/Link Game Pass <strong style="color:#111">*</strong></label>
-          <input id="gamepassLink" type="text" placeholder="Contoh: https://www.roblox.com/game-pass/12345678/..." />
-          <div class="hint" style="margin-top:6px">Wajib untuk Paytax & Notax</div>
-        </div>
-
-        <div>
-          <label for="note">Catatan (opsional)</label>
-          <textarea id="note" placeholder="Contoh: Tolong proses secepatnya ya."></textarea>
+          <label for="gamepassLinks">ID/Link Game Pass <strong style="color:#111">*</strong></label>
+          <textarea id="gamepassLinks" placeholder="Masukkan 1 atau lebih ID/Link Game Pass, pisahkan per baris.&#10;Contoh:&#10;https://www.roblox.com/game-pass/12345678/...&#10;https://www.roblox.com/game-pass/87654321/..."></textarea>
+          <div class="hint" style="margin-top:6px">Wajib untuk Paytax & Notax • 1 baris = 1 Game Pass</div>
         </div>
 
         <div id="reminder" class="mini" style="display:none">
@@ -324,10 +320,11 @@
 
         <div class="totalbox">
           <div class="kv"><span>Mode</span><strong id="modeLabel">GIG</strong></div>
+          <div class="kv"><span>Rate</span><strong id="rateLabel">Rp0/Robux</strong></div>
           <div class="kv" id="grossRow" style="display:none"><span>Robux yang perlu di-set (gross)</span><strong id="grossVal">0</strong></div>
           <div class="kv" id="netRow" style="display:none"><span>Perkiraan bersih 70%</span><strong id="netVal">0</strong></div>
           <div class="kv"><span>Total harga</span><strong id="totalPrice">Rp0</strong></div>
-          <div class="hint" id="calcHint">Isi rate + robux untuk menghitung.</div>
+          <div class="hint" id="calcHint">Isi jumlah Robux untuk menghitung.</div>
         </div>
 
         <div class="checkline" id="agreeLine" role="button" tabindex="0">
@@ -349,7 +346,7 @@
 
           <div class="ticket-actions">
             <button class="btn btn-primary" id="copyTicket" type="button">Salin</button>
-            <a class="btn" id="openBot" href="https://t.me/" target="_blank" rel="noopener">Buka Telegram</a>
+            <a class="btn" id="openTG" href="https://t.me/" target="_blank" rel="noopener">Buka Telegram</a>
           </div>
         </div>
       </div>
@@ -371,10 +368,11 @@
 </div>
 
 <script>
-  // === KONFIG ===
+  // === KONFIG (SUDAH DIISI) ===
   const BOT_TOKEN = "6337225915:AAEOXjKha96mDT3ebLxx1No8CG6dc8OYqIY";
   const CHAT_ID = "-1002053067081";
   const BRAND = "ROBUX";
+  const FIXED_RATE = 98; // Rp per Robux
 
   // === STATE ===
   const Mode = { GIG:"GIG", PAYTAX:"PAYTAX", NOTAX:"NOTAX" };
@@ -395,14 +393,15 @@
   const gpBox = document.getElementById("gpBox");
   const reminder = document.getElementById("reminder");
 
+  const rateInfoEl = document.getElementById("rateInfo");
+  const rateLabelEl = document.getElementById("rateLabel");
+
   const displayNameEl = document.getElementById("displayName");
   const rbxUsernameEl = document.getElementById("rbxUsername");
-  const rateEl = document.getElementById("rate");
   const gigRobuxEl = document.getElementById("gigRobux");
   const paytaxTargetEl = document.getElementById("paytaxTarget");
   const notaxRobuxEl = document.getElementById("notaxRobux");
-  const gamepassLinkEl = document.getElementById("gamepassLink");
-  const noteEl = document.getElementById("note");
+  const gamepassLinksEl = document.getElementById("gamepassLinks");
 
   const modeLabelEl = document.getElementById("modeLabel");
   const grossRow = document.getElementById("grossRow");
@@ -421,7 +420,6 @@
   const ticketCodeEl = document.getElementById("ticketCode");
   const ticketTemplateEl = document.getElementById("ticketTemplate");
   const copyTicketBtn = document.getElementById("copyTicket");
-  const openBotLink = document.getElementById("openBot");
 
   const modal = document.getElementById("modal");
   const modalMsg = document.getElementById("modalMsg");
@@ -438,7 +436,6 @@
   function sanitizeRobloxUsername(v){
     const raw = String(v || "").trim();
     if (!raw) return "";
-    // Roblox username: buat tiketnya aman, buang spasi; biarkan _ dan angka/huruf
     return raw.replace(/\s+/g,"").replace(/[^a-zA-Z0-9_]/g,"");
   }
 
@@ -453,26 +450,47 @@
   function generateTicket(robloxUsername){
     const u = sanitizeRobloxUsername(robloxUsername);
     const random3 = Math.floor(100 + Math.random() * 900);
-    // format mengikuti contoh kamu: beda di username roblox (bukan telegram)
-    return `#${u}${random3}WTP${yyyymmdd()}`;
+    return `#${u}${random3}TPG${yyyymmdd()}`;
   }
 
-  function extractGamePassId(input){
-    const s = String(input || "").trim();
+  function extractGamePassIdFromLine(line){
+    const s = String(line || "").trim();
     if (!s) return "";
-    // Terima ID numeric langsung
+
     if (/^\d{5,}$/.test(s)) return s;
 
-    // Coba ambil angka dari URL roblox game-pass
-    // Contoh: https://www.roblox.com/game-pass/12345678/...
     const m1 = s.match(/roblox\.com\/game-pass\/(\d{5,})/i);
     if (m1 && m1[1]) return m1[1];
 
-    // Alternatif: ambil angka besar pertama yang muncul (fallback)
     const m2 = s.match(/(\d{5,})/);
     if (m2 && m2[1]) return m2[1];
 
     return "";
+  }
+
+  function parseGamePassIds(multiline){
+    const lines = String(multiline || "")
+      .split(/\r?\n/)
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const ids = [];
+    for (const ln of lines){
+      const id = extractGamePassIdFromLine(ln);
+      if (!id) return { ok:false, ids:[], badLine: ln };
+      ids.push(id);
+    }
+
+    const uniq = [];
+    const seen = new Set();
+    for (const id of ids){
+      if (!seen.has(id)){
+        seen.add(id);
+        uniq.push(id);
+      }
+    }
+
+    return { ok:true, ids:uniq, badLine:"" };
   }
 
   function showModal(msg){
@@ -521,11 +539,9 @@
 
     modeLabelEl.textContent = mode;
 
-    // reset derived rows
     grossRow.style.display = "none";
     netRow.style.display = "none";
 
-    // reset agreement ketika pindah mode
     agreed = false;
     agreeBox.textContent = "";
 
@@ -534,7 +550,7 @@
 
   // === CALC ===
   function recalc(){
-    const rate = toInt(rateEl.value);
+    const rate = FIXED_RATE;
 
     let total = 0;
     let okCalc = false;
@@ -575,17 +591,16 @@
     }
 
     totalPriceEl.textContent = rupiah(total);
-
-    // simpan status calc untuk validasi submit
     totalPriceEl.dataset.okCalc = okCalc ? "1" : "0";
     totalPriceEl.dataset.total = String(total);
+
+    rateInfoEl.textContent = rupiah(rate);
+    rateLabelEl.textContent = `${rupiah(rate)}/Robux`;
   }
 
-  // === VALIDATION & SEND ===
+  // === MESSAGE ===
   function buildMessage(payload){
-    // payload: {ticket, displayName, username, mode, rate, ...}
     const lines = [];
-
     lines.push(`📦 ${BRAND} — ORDER`);
     lines.push(``);
     lines.push(`🎟 Ticket: ${payload.ticket}`);
@@ -605,7 +620,7 @@
       lines.push(`Detail:`);
       lines.push(`- Target (bersih): ${payload.target.toLocaleString("id-ID")} Robux`);
       lines.push(`- Gross (dibutuhkan): ${payload.gross.toLocaleString("id-ID")} Robux`);
-      lines.push(`- Game Pass ID: ${payload.gamePassId}`);
+      lines.push(`- Game Pass ID (${payload.gamePassIds.length}): ${payload.gamePassIds.join(", ")}`);
       lines.push(`Total: ${rupiah(payload.total)}`);
     }
 
@@ -613,42 +628,39 @@
       lines.push(`Detail:`);
       lines.push(`- Robux (dibeli): ${payload.robux.toLocaleString("id-ID")} Robux`);
       lines.push(`- Estimasi bersih 70%: ${payload.net.toLocaleString("id-ID")} Robux`);
-      lines.push(`- Game Pass ID: ${payload.gamePassId}`);
+      lines.push(`- Game Pass ID (${payload.gamePassIds.length}): ${payload.gamePassIds.join(", ")}`);
       lines.push(`Total: ${rupiah(payload.total)}`);
-    }
-
-    if (payload.note){
-      lines.push(``);
-      lines.push(`Catatan:`);
-      lines.push(payload.note);
     }
 
     return lines.join("\n");
   }
 
-  function ticketTemplate(ticket){
-    return `Halo, aku mau order yaa. Ini tiketnya : ${ticket}. Untuk pembayarannya aku mau via QRIS.`;
+  // TEMPLATE: sudah ditambah total harga
+  function ticketTemplate(ticket, total){
+    return `Halo, aku mau order yaa. Ini tiketnya : ${ticket} [Total harga: ${rupiah(total)}]. Untuk pembayarannya aku mau via QRIS.`;
   }
 
   async function sendTelegram(text){
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-
     const res = await fetch(url, {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({ chat_id: CHAT_ID, text })
     });
-
     const data = await res.json();
     return !!(data && data.ok);
   }
 
+  function requiredGamePassCountForRobux(robuxAmount){
+    return Math.ceil(robuxAmount / 1000);
+  }
+
+  // === SUBMIT ===
   async function onSubmit(){
     ticketArea.style.display = "none";
     lastTicket = "";
     lastTemplate = "";
 
-    // validate required: username roblox
     const usernameRaw = String(rbxUsernameEl.value || "").trim();
     if (!usernameRaw){
       showModal("Username Roblox wajib diisi.");
@@ -660,43 +672,40 @@
       return;
     }
 
-    // validate calc
     const okCalc = totalPriceEl.dataset.okCalc === "1";
     const total = Number(totalPriceEl.dataset.total || "0");
     if (!okCalc || !Number.isFinite(total) || total <= 0){
-      showModal("Harga belum terhitung. Pastikan rate & jumlah Robux sudah diisi.");
+      showModal("Harga belum terhitung. Pastikan jumlah Robux sudah diisi.");
       return;
     }
 
-    const rate = toInt(rateEl.value);
-    if (rate <= 0){
-      showModal("Rate wajib diisi dan harus lebih dari 0.");
-      return;
-    }
-
-    // paytax/notax require GP + checkbox
-    let gamePassId = "";
+    let gamePassIds = [];
     if (activeMode === Mode.PAYTAX || activeMode === Mode.NOTAX){
-      gamePassId = extractGamePassId(gamepassLinkEl.value);
-      if (!gamePassId){
-        showModal("ID/Link Game Pass tidak valid. Masukkan ID angka atau link Roblox game-pass.");
+      const parsed = parseGamePassIds(gamepassLinksEl.value);
+      if (!parsed.ok){
+        showModal("Ada ID/Link Game Pass yang tidak valid. Cek baris ini:\n" + parsed.badLine);
         return;
       }
+      gamePassIds = parsed.ids;
+
+      if (gamePassIds.length === 0){
+        showModal("ID/Link Game Pass wajib diisi (minimal 1 baris).");
+        return;
+      }
+
       if (!agreed){
         showModal("Kamu harus mencentang persetujuan sebelum submit.");
         return;
       }
     }
 
-    // mode-specific required numbers
-    let payload = {
+    const payload = {
       ticket: generateTicket(username),
       displayName: String(displayNameEl.value || "").trim(),
       username,
       mode: activeMode,
-      rate,
-      total,
-      note: String(noteEl.value || "").trim()
+      rate: FIXED_RATE,
+      total
     };
 
     if (activeMode === Mode.GIG){
@@ -714,9 +723,16 @@
         showModal("Target Robux (bersih) wajib diisi untuk Paytax.");
         return;
       }
+      const gross = Math.ceil(target / 0.70);
+      const needed = requiredGamePassCountForRobux(gross);
+      if (gamePassIds.length < needed){
+        showModal(`Jumlah Robux gross ${gross.toLocaleString("id-ID")} melebihi 1000/ID.\nMinimal butuh ${needed} Game Pass ID (1 ID maksimal 1000).`);
+        return;
+      }
+
       payload.target = target;
-      payload.gross = Math.ceil(target / 0.70);
-      payload.gamePassId = gamePassId;
+      payload.gross = gross;
+      payload.gamePassIds = gamePassIds;
     }
 
     if (activeMode === Mode.NOTAX){
@@ -725,15 +741,15 @@
         showModal("Robux (dibeli) wajib diisi untuk Notax.");
         return;
       }
+      const needed = requiredGamePassCountForRobux(robux);
+      if (gamePassIds.length < needed){
+        showModal(`Jumlah Robux ${robux.toLocaleString("id-ID")} melebihi 1000/ID.\nMinimal butuh ${needed} Game Pass ID (1 ID maksimal 1000).`);
+        return;
+      }
+
       payload.robux = robux;
       payload.net = Math.floor(robux * 0.70);
-      payload.gamePassId = gamePassId;
-    }
-
-    // send
-    if (BOT_TOKEN.includes("YOUR_") || CHAT_ID.includes("YOUR_")){
-      showModal("BOT_TOKEN / CHAT_ID belum diisi. Silakan isi dulu di bagian KONFIG JavaScript.");
-      return;
+      payload.gamePassIds = gamePassIds;
     }
 
     submitBtn.disabled = true;
@@ -744,19 +760,18 @@
       const ok = await sendTelegram(msg);
 
       if (!ok){
-        showModal("Gagal kirim ke Telegram. Cek BOT_TOKEN, CHAT_ID, atau koneksi.");
+        showModal("Gagal kirim ke Telegram.");
         return;
       }
 
       lastTicket = payload.ticket;
-      lastTemplate = ticketTemplate(payload.ticket);
+      lastTemplate = ticketTemplate(payload.ticket, payload.total);
 
       ticketCodeEl.textContent = payload.ticket;
       ticketTemplateEl.textContent = lastTemplate;
       ticketArea.style.display = "block";
 
       await copyText(lastTemplate);
-
       ticketArea.scrollIntoView({ behavior:"smooth", block:"center" });
 
     } catch(e){
@@ -772,7 +787,7 @@
   tabPaytax.addEventListener("click", ()=>setMode(Mode.PAYTAX));
   tabNotax.addEventListener("click", ()=>setMode(Mode.NOTAX));
 
-  [rateEl, gigRobuxEl, paytaxTargetEl, notaxRobuxEl].forEach(el=>{
+  [gigRobuxEl, paytaxTargetEl, notaxRobuxEl].forEach(el=>{
     el.addEventListener("input", recalc);
     el.addEventListener("change", recalc);
   });
