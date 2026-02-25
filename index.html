@@ -395,7 +395,7 @@
           <div style="font-weight:900">Berhasil dikirim.</div>
           <div class="ticket-code mono" id="ticketCode"></div>
 
-          <div class="hint" style="margin-top:10px;margin-bottom:6px">Template pesan (tersalin otomatis):</div>
+          <div class="hint" style="margin-top:10px;margin-bottom:6px">Kirim pesan ini ke bot. (tersalin otomatis):</div>
           <div class="ticket-template mono" id="ticketTemplate"></div>
 
           <div class="ticket-actions">
@@ -663,7 +663,6 @@
         grossRow.style.display = "flex";
         grossValEl.textContent = gross.toLocaleString("id-ID");
       }
-      calcHintEl.textContent = "Paytax: ceil(target ÷ 70%) × rate";
     }
 
     if (activeMode === Mode.NOTAX){
@@ -674,7 +673,6 @@
         netRow.style.display = "flex";
         netValEl.textContent = Math.floor(robux * 0.70).toLocaleString("id-ID");
       }
-      calcHintEl.textContent = "Notax: robux × rate (tampil estimasi bersih 70%)";
     }
 
     totalPriceEl.textContent = rupiah(total);
