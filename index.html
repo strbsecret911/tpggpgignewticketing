@@ -402,7 +402,7 @@
 
           <div class="ticket-actions">
             <button class="btn btn-primary" id="copyTicket" type="button">Salin</button>
-            <a class="btn" id="openTG" href="https://t.me/" target="_blank" rel="noopener">Buka Telegram</a>
+            <a class="btn" id="openTG" href="https://t.me/" target="topupgrambot" rel="noopener">Buka Telegram</a>
           </div>
         </div>
       </div>
@@ -412,9 +412,9 @@
 
 <!-- Modal popup validasi -->
 <div class="modal" id="modal" aria-hidden="true">
-  <div class="modal-card" role="dialog" aria-modal="true" aria-label="Validasi">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-label="Notifikasi">
     <div class="modal-h">
-      <strong>Validasi</strong>
+      <strong>Notifikasi</strong>
       <button class="btn" id="modalClose" type="button" style="padding:8px 10px">Tutup</button>
     </div>
     <div class="modal-b">
@@ -868,7 +868,7 @@
       showModal("Terjadi kesalahan saat mengirim.");
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = "Submit Order";
+      submitBtn.textContent = "Order Sekarang";
     }
   }
 
