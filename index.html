@@ -653,7 +653,6 @@
         total = robux * rate;
         okCalc = true;
       }
-      calcHintEl.textContent = "GIG: robux × rate";
     }
 
     if (activeMode === Mode.PAYTAX){
@@ -816,7 +815,7 @@
       const gross = Math.ceil(target / 0.70);
       const needed = requiredGamePassCountForRobux(gross);
       if (gamePassIds.length < needed){
-        showModal(`Jumlah Robux gross ${gross.toLocaleString("id-ID")} melebihi 1000/ID.\nMinimal butuh ${needed} Game Pass ID (1 ID maksimal 1000).`);
+        showModal(`Jumlah Robux gross ${gross.toLocaleString("id-ID")} melebihi 1429/ID.\nMinimal butuh ${needed} Game Pass ID (1 ID maksimal 1429).`);
         return;
       }
 
@@ -833,7 +832,7 @@
       }
       const needed = requiredGamePassCountForRobux(robux);
       if (gamePassIds.length < needed){
-        showModal(`Jumlah Robux ${robux.toLocaleString("id-ID")} melebihi 1000/ID.\nMinimal butuh ${needed} Game Pass ID (1 ID maksimal 1000).`);
+        showModal(`Jumlah Robux ${robux.toLocaleString("id-ID")} melebihi 1429/ID.\nMinimal butuh ${needed} Game Pass ID (1 ID maksimal 1429).`);
         return;
       }
 
